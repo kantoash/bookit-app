@@ -7,6 +7,7 @@ import React, { useMemo } from "react";
 import { IconType } from "react-icons";
 import ListingCategory from "./ListingCategory";
 import dynamic from "next/dynamic";
+import Avatar from "@/app/components/inputs/Avatar";
 
 
 type Category = {
@@ -46,13 +47,7 @@ const ListingInfo: React.FC<ListingInfoProps> = ({
       <div className="flex flex-col gap-2">
         <div className="text-xl font-semibold flex flex-row items-center gap-2">
           <div>Hosted By {user?.name}</div>
-          <Image
-            src={user.image || "./images/placeholder"}
-            alt=""
-            height={20}
-            width={20}
-            className="rounded-full"
-          />
+          <Avatar src={user.image} />
         </div>
         <div className="flex flex-row items-center gap-4 font-light text-neutral-600">
           <div>Max guest: {guestCount}</div>
