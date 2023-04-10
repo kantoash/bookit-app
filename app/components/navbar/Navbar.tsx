@@ -1,8 +1,8 @@
 "use client";
 
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useMemo, useState } from "react";
 import Container from "../../Container";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import Image from "next/image";
 import { MagnifyingGlassIcon, Bars3Icon } from "@heroicons/react/24/outline";
 import MenuItem from "./MenuItem";
@@ -14,18 +14,63 @@ import useRentModal from "@/app/hooks/useRentModal";
 import useSearchModal from "@/app/hooks/useSearchModal";
 import { signOut } from "next-auth/react";
 import Avatar from "../inputs/Avatar";
+import { differenceInCalendarDays, differenceInDays } from "date-fns";
+import useCountries from "@/app/hooks/useCountries";
 
 interface UserProps {
   CurrentUser?: SafeUser | null;
 }
 
+// userId?: string;
+// guestCount?: number;
+// roomCount?: number;
+// bathroomCount?: number;
+// startDate?: string;
+// endDate?: string;
+// locationValue?: string;
+// category?: string;
 const Navbar: React.FC<UserProps> = ({ CurrentUser }) => {
   const registerModal = useRegisterModal();
   const loginModal = useLoginModal();
   const RentModal = useRentModal();
   const searchModal = useSearchModal();
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [isOpen, setIsOpen] = useState(false);
+
+  const { getByValue } = useCountries();
+  const locationValue = searchParams?.get("locationValue");
+  const guestCount = searchParams?.get("guestCount");
+  const startDate = searchParams?.get("startDate");
+  const endDate = searchParams?.get("endDate");
+
+  const locationLabel = useMemo(() => {
+    if (locationValue) {
+      return getByValue(locationValue as string)?.label;
+    }
+    return 'Anywhere'
+  },[locationValue, getByValue])
+
+  const durationLabel = useMemo(() => {
+    if (startDate && endDate) {
+      const start = new Date(startDate as string);
+      const end = new Date(endDate as string);
+      let DaysDifference = differenceInDays(end, start);
+      if (DaysDifference === 0) {
+        DaysDifference = 1;
+      }
+      return `${DaysDifference} Days`;
+    }
+    return 'Any Week'
+  }, [startDate, endDate]);
+
+  const guestLabel = useMemo(() => {
+    if (guestCount) {
+      return `${guestCount} Guests`;
+    }
+
+    return 'Add Guests';
+  }, [guestCount]);
 
   const onRent = useCallback(() => {
     if (!CurrentUser) {
@@ -61,13 +106,13 @@ const Navbar: React.FC<UserProps> = ({ CurrentUser }) => {
             >
               <div className="flex flex-row items-center justify-between">
                 <div className="text-sm font-semibold px-5 text-center">
-                  Anywhere
+                  {locationLabel}
                 </div>
                 <div className="text-sm hidden sm:block font-semibold px-5 border-x-[1px] border-gray-300 flex-1 text-center">
-                  Any week
+                  {durationLabel}
                 </div>
                 <div className="text-sm font-semibold px-5 pl-6 pr-2 text-gray-600 flex flex-row items-center gap-3">
-                  <div className="hidden sm:block">Add Guests</div>
+                  <div className="hidden sm:block">{guestLabel}</div>
                   <div className="p-1 bg-rose-500 rounded-full text-white ">
                     <MagnifyingGlassIcon className="h-4" />
                   </div>

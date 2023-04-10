@@ -45,7 +45,6 @@ export default async function getListings(params: IListingsParams) {
       query.bathroomCount = { gte: +bathroomCount };
     }
     if (startDate && endDate) {
-      query.startDate = startDate;
       query.NOT = {
         reservations: {
           some: {
@@ -56,7 +55,7 @@ export default async function getListings(params: IListingsParams) {
               },
               {
                 startDate: { lte: endDate },
-                endDate: { gte: startDate },
+                endDate: { gte: endDate },
               },
             ],
           },
@@ -64,12 +63,13 @@ export default async function getListings(params: IListingsParams) {
       };
     }
 
-    const listings = await prisma?.listing.findMany({
+    const listings = await prisma.listing.findMany({
       where: query,
       orderBy: {
         createdAt: "desc",
       },
     });
+    
     const safeListings = listings.map((listing) => ({
       ...listing,
       createdAt: listing.createdAt.toISOString(),

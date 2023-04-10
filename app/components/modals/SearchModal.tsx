@@ -36,15 +36,6 @@ const SearchModal = () => {
     key: "selection",
   });
 
-  const {
-    register,
-    handleSubmit,
-    setValue,
-    watch,
-    formState: { errors },
-    reset,
-  } = useForm<FieldValues>();
-
   const Map = useMemo(
     () =>
       dynamic(() => import("../inputs/Map"), {
@@ -106,6 +97,7 @@ const SearchModal = () => {
     guestCount,
     dateRange,
     params,
+    onNext,
   ]);
   const actionLabel = useMemo(() => {
     if (step === STEPS.INFO) {
@@ -161,23 +153,23 @@ const SearchModal = () => {
           <p>Find your perfect place!</p>
         </header>
         <Counter
-            title="Guests"
-            subtitle="How many guests are coming?"
-            value={guestCount}
-            onChange={(value) => setGuestCount(value)}
-          />
-          <Counter
-            title="Rooms"
-            subtitle="How many rooms do you need?"
-            value={roomCount}
-            onChange={(value) => setRoomCount(value)}
-          />
-          <Counter
-            title="Bathroom"
-            subtitle="How many bathrooms do you need?"
-            value={bathroomCount}
-            onChange={(value) => setBathroomCount(value)}
-          />
+          title="Guests"
+          subtitle="How many guests are coming?"
+          value={guestCount}
+          onChange={(value) => setGuestCount(value)}
+        />
+        <Counter
+          title="Rooms"
+          subtitle="How many rooms do you need?"
+          value={roomCount}
+          onChange={(value) => setRoomCount(value)}
+        />
+        <Counter
+          title="Bathroom"
+          subtitle="How many bathrooms do you need?"
+          value={bathroomCount}
+          onChange={(value) => setBathroomCount(value)}
+        />
       </div>
     );
   }
@@ -187,7 +179,7 @@ const SearchModal = () => {
       title="Filters"
       isOpen={searchModal.isOpen}
       onClose={searchModal.onClose}
-      onSubmit={handleSubmit(onSubmit)}
+      onSubmit={onSubmit}
       actionLabel={actionLabel}
       secondaryActionLabel={secondaryActionLabel}
       secondaryAction={step === STEPS.LOCATION ? undefined : onBack}
