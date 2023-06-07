@@ -77,9 +77,9 @@ const ListingClient: React.FC<ListingClientProps> = ({
         router.refresh();
       })
       .catch((err) => {
-        setIsLoading(false);
         toast.error("Something went wrong");
       });
+      setIsLoading(false);
   }, [totalPrice, dateRange, listing?.id, currentUser, loginModal]);
 
   useEffect(() => {
